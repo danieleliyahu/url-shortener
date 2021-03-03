@@ -7,6 +7,7 @@ const fs = require ('fs');
 const { url } = require("inspector");
 const { json } = require("body-parser");
 const { stringify } = require("querystring");
+const { ok } = require("assert");
 
 class DataBase {
   constructor(shorturlId
@@ -35,59 +36,133 @@ app.get("/", (req, res) => {
 });
   app.post("/api/shorturl/new", (req, res) => {
     let data = []
-      const fileContent = fs.readFileSync(
-           './saveurl/index2.json',
-           { encoding: 'utf8', flag: 'r' });
-           let newFileContent = JSON.parse(fileContent)
+    let idName = (req.body.url)
+      // const fileContent = fs.readFileSync(
+      //      './saveurl/index2.json',
+      //      { encoding: 'utf8', flag: 'r' });
+      fs.readFile('./saveurl/index2.json', 'utf8', (err, jsonString) => {
+        let newShortid = shortid.generate()
+        if (err) {
+            console.log("Error reading file from disk:", err)
+            return
+        }
+            
+
+        try {
+          let newFileContent = JSON.parse(jsonString)
+          console.log(newFileContent)
+        
+          if(JSON.stringify(newFileContent[0][idName])){
+            return res.send(newFileContent[0][idName].shorturlId);
+            }
+            
+             
+          console.log(`first time  ${newShortid}`)
+          let urls = new DataBase(`http://localhost:3000/api/shorturl/new/${newShortid}`,Object.keys(newFileContent[0]).length);
+          newFileContent[0][idName] = urls;
+          newFileContent[1][newShortid] = idName
+          fs.writeFile('./saveurl/index2.json', JSON.stringify(newFileContent), err => {
+              if (err) {
+                  console.log('Error writing file', err)
+              } else {
+                console.log(JSON.parse(jsonString))
+               return JSON.parse(jsonString)
+              }
+          })
+          // fs.writeFileSync(`./saveurl/index2.json`,JSON.stringify(newFileContent))
+           
+          console.log(`second time  ${newShortid}`)
+          res.send(`http://localhost:3000/api/shorturl/new/${newShortid}`);
+           
+          console.log(`fird time  ${newShortid}`)
+            return
+          
+    } catch(err) {
+            console.log('Error parsing JSON string:', err)
+        }
+    })
+          //  let newFileContent = JSON.parse(fileContent)
+          //  console.log(`daniel ${newFileContent}`)
+          //  console.log(`daniel el${fileContent}`)
           
            
-           let idName = (req.body.url)
-           if(JSON.stringify(newFileContent[0][idName])){
-           return res.send(newFileContent[0][idName].shorturlId);
-           }
+          
+          //  if(JSON.stringify(newFileContent[0][idName])){
+          //  return res.send(newFileContent[0][idName].shorturlId);
+          //  }
 
-          let newShortid = shortid.generate()
+          // let newShortid = shortid.generate()
 
-          let urls = new DataBase(`http://localhost:3000/api/shorturl/new/${newShortid}`,Object.keys(newFileContent[0]).length);
-          console.log(Object.keys(newFileContent[0]).length)
+          // let urls = new DataBase(`http://localhost:3000/api/shorturl/new/${newShortid}`,Object.keys(newFileContent[0]).length);
+          // console.log(Object.keys(newFileContent[0]).length)
 
-          let object = {}
-          object = newFileContent[0]
+          // let object = {}
+          // object = newFileContent[0]
     
-          newFileContent[0][idName] = urls;
+          // newFileContent[0][idName] = urls;
 
-          newFileContent[1][newShortid] = idName
-    let x = fs.writeFileSync(`./saveurl/index2.json`,JSON.stringify(newFileContent))
+          // newFileContent[1][newShortid] = idName
+  //   let x = fs.writeFileSync(`./saveurl/index2.json`,JSON.stringify(newFileContent))
 
-  res.send(`http://localhost:3000/api/shorturl/new/${newShortid}`);
+  // res.send(`http://localhost:3000/api/shorturl/new/${newShortid}`);
 
 });
 
 app.get("/api/shorturl/new/", (req, res) => {
+
   const fileContent = fs.readFileSync(
-    './saveurl/index.json',
+    './saveurl/index2.json',
     { encoding: 'utf8', flag: 'r' });
   console.log(req.body)
   res.send(fileContent);
 });
 app.get("/api/shorturl/new/:id", (req, res) => {
   let  id  = req.params.id;
-  const data = fs.readFileSync(
-    './saveurl/index2.json',
-    { encoding: 'utf8', flag: 'r' });
-    let dataJson = JSON.parse(data);
-    newUrl = `http://localhost:3000/api/shorturl/new/${id} `
-   let path = JSON.stringify(dataJson[1][id])
-   
-   
-      path = path.replace('"',"")
-      path = path.replace('"',"")
+  fs.readFile('./saveurl/index2.json', 'utf8', (err, data) => {
+    if (err) {
+        console.log("Error reading file from disk:", err)
+        return
+    }
+    try {
 
-      console.log(dataJson[0][path]["redirectCount"])
-      dataJson[0][path]["redirectCount"]++
+        const dataJson = JSON.parse(data)
+        newUrl = `http://localhost:3000/api/shorturl/new/${id} `
+        let path = JSON.stringify(dataJson[1][id])
+        
+        
+           path = path.replace('"',"")
+           path = path.replace('"',"")
+     
+           console.log(dataJson[0][path]["redirectCount"])
+           dataJson[0][path]["redirectCount"]++
+            fs.writeFile('./saveurl/index2.json', JSON.stringify(dataJson), err => {
+            if (err) {
+                console.log('Error writing file', err)
+            } else {
+              res.redirect(path)
+             return JSON.parse(dataJson)
+            }
+        })
+ 
+} catch(err) {
+        console.log('Error parsing JSON string:', err)
+    }
+})
+  // const data = fs.readFileSync(
+  //   './saveurl/index2.json',
+  //   { encoding: 'utf8', flag: 'r' });
+  //   let dataJson = JSON.parse(data);
+  //   newUrl = `http://localhost:3000/api/shorturl/new/${id} `
+  //  let path = JSON.stringify(dataJson[1][id])
+   
+   
+  //     path = path.replace('"',"")
+  //     path = path.replace('"',"")
+
+  //     console.log(dataJson[0][path]["redirectCount"])
+  //     dataJson[0][path]["redirectCount"]++
       
-      fs.writeFileSync(`./saveurl/index2.json`,JSON.stringify(dataJson))
-    console.log(path)
-    res.redirect(path)
+  //     fs.writeFileSync(`./saveurl/index2.json`,JSON.stringify(dataJson))
+  //     res.redirect(path)
   })
 module.exports = app;
