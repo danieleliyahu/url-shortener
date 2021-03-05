@@ -2,7 +2,6 @@
 const fs = require("fs");
 require("dotenv").config();
 const express = require("express");
-
 const cors = require("cors");
 const app = express();
 const shortid = require('shortid');
@@ -11,6 +10,8 @@ const router = express.Router();
 router.use(express.json());
 const bodyParser = require('body-parser')
 router.use(bodyParser.json());
+const jsonFileName = "test"
+
 class DataBase {
     constructor(shorturlId
       ,id ){
@@ -35,10 +36,31 @@ class DataBase {
   router.use("/public", express.static(`./public`));
 
   router.post("/", (req, res) => {
+    if(jsonFileName !== "index2"){
+      let contentOfJson = [
+        {
+            "https://www.youtube.com/watch?v=_8gHHBlbziw&t=1136s": {
+                "id": 0,
+                "shorturlId": "http://localhost:3000/api/shorturl/new/y-CuJ_eZA",
+                "redirectCount": 0,
+                "creationDate": "2021-03-05 15:07:25"
+            }
+        },
+        {
+            "y-CuJ_eZA": "https://www.youtube.com/watch?v=_8gHHBlbziw&t=1136s"
+        }
+    ]
+      fs.writeFile(`./saveurl/${jsonFileName}.json`,JSON.stringify(contentOfJson) , err => {
+        if (err) {
+        } else {
+          contentOfJson
+        }
+    })
+    }
       let idName = (req.body.url)
       console.log(`dani${(idName)}`)
       console.log(`el${JSON.stringify(req.body)}`)
-        fs.readFile('./saveurl/index2.json', 'utf8', (err, jsonString) => {
+        fs.readFile(`./saveurl/${jsonFileName}.json`, 'utf8', (err, jsonString) => {
           let newShortid = shortid.generate()
           if (err) {
               return
@@ -53,13 +75,14 @@ class DataBase {
             let urls = new DataBase(`http://localhost:3000/api/shorturl/new/${newShortid}`,Object.keys(newFileContent[0]).length);
             newFileContent[0][idName] = urls;
             newFileContent[1][newShortid] = idName
-            fs.writeFile('./saveurl/index2.json', JSON.stringify(newFileContent), err => {
+            fs.writeFile(`./saveurl/${jsonFileName}.json`, JSON.stringify(newFileContent,null ,4), err => {
                 if (err) {
                 } else {
                  return JSON.parse(jsonString)
                 }
             })
             res.send(`http://localhost:3000/api/shorturl/new/${newShortid}`);
+
   
               return
             
@@ -72,7 +95,7 @@ class DataBase {
   
   router.get("/:id", (req, res) => {
     let  id  = req.params.id;
-    fs.readFile('./saveurl/index2.json', 'utf8', (err, data) => {
+    fs.readFile(`./saveurl/${jsonFileName}.json`, 'utf8', (err, data) => {
       if (err) {
           console.log("Error reading file from disk:", err)
           return
@@ -80,7 +103,8 @@ class DataBase {
       try {
           const dataJson = JSON.parse(data)
           if(!JSON.stringify(dataJson[1][id])){
-              res.send("the id is not correct")
+              res.status(404).send("the id is not correct")
+              return
           }
           let path = JSON.stringify(dataJson[1][id])
           
@@ -90,7 +114,7 @@ class DataBase {
        
              console.log(dataJson[0][path]["redirectCount"])
              dataJson[0][path]["redirectCount"]++
-              fs.writeFile('./saveurl/index2.json', JSON.stringify(dataJson), err => {
+              fs.writeFile(`./saveurl/${jsonFileName}.json`, JSON.stringify(dataJson,null,4), err => {
               if (err) {
                   console.log('Error writing file', err)
               } else {
