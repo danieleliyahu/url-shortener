@@ -1,1 +1,20 @@
-[{"https://www.youtube.com/watch?v=_8gHHBlbziw&t=1136s":{"id":0,"shorturlId":"http://localhost:3000/api/shorturl/new/y-CuJ_eZA","redirectCount":0,"creationDate":"2021-03-05 15:07:25"}},{"y-CuJ_eZA":"https://www.youtube.com/watch?v=_8gHHBlbziw&t=1136s"}]
+[
+    {
+        "https://www.youtube.com/watch?v=_8gHHBlbziw&t=1136s": {
+            "id": 0,
+            "shorturlId": "http://localhost:3000/api/shorturl/new/y-CuJ_eZA",
+            "redirectCount": 0,
+            "creationDate": "2021-03-05 15:07:25"
+        },
+        "https://www.pirateproxy-bay.com/": {
+            "id": 1,
+            "shorturlId": "http://localhost:3000/api/shorturl/new/wuQ0QUQRH9",
+            "redirectCount": 0,
+            "creationDate": "2021-03-06 18:53:41"
+        }
+    },
+    {
+        "y-CuJ_eZA": "https://www.youtube.com/watch?v=_8gHHBlbziw&t=1136s",
+        "wuQ0QUQRH9": "https://www.pirateproxy-bay.com/"
+    }
+]

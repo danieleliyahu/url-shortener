@@ -5,13 +5,13 @@ const app = require('../app');
 
 
 describe("get method",()=>{
+    let expectedOutput = {
+        "id": 0,
+        "shorturlId": "http://localhost:3000/api/shorturl/new/y-CuJ_eZA",
+        "redirectCount": 0,
+        "creationDate": "2021-03-05 15:07:25"
+    }
     it("show statistic",async()=>{
-        let expectedOutput = {
-            "id": 0,
-            "shorturlId": "http://localhost:3000/api/shorturl/new/y-CuJ_eZA",
-            "redirectCount": 0,
-            "creationDate": "2021-03-05 15:07:25"
-        }
         const response = await request(app).get('/api/statistic/y-CuJ_eZA');
         expect(response.status).toBe(200)
         expect(response.body).toEqual(expectedOutput);
@@ -21,6 +21,12 @@ describe("get method",()=>{
     expect(response.status).toBe(302)
     expect(response.header.location).toEqual("https://www.youtube.com/watch?v=_8gHHBlbziw&t=1136s");
 }) 
+    it("the redirectCount work",async()=>{
+    const response = await request(app).get('/api/statistic/y-CuJ_eZA');
+    expect(response.status).toBe(200)
+    expect(response.body.redirectCount).toEqual(expectedOutput.redirectCount + 1);
+}) 
+    
     it("when get id that does not exist it will send error",async()=>{
     const response = await request(app).get('/api/shorturl/new/fsdf45246426');
     expect(response.status).toBe(404);
@@ -34,13 +40,11 @@ describe("post method ",()=>{
     expect(response.status).toBe(200);
     expect(response.text).toEqual("http://localhost:3000/api/shorturl/new/y-CuJ_eZA");
     }) 
-    it("its  posted at the first time",async()=>{
-    const response1 = await request(app).post('/api/shorturl/new/').type('form').send({url:"https://www.pirateproxy-bay.com/"});
-    const response2 = await request(app).post('/api/shorturl/new/').type('form').send({url:"https://jestjs.io/docs/en/expect#not"});
-     startWith  = response1.text.startsWith("http://localhost:3000/api/shorturl/new/");
-    expect(response1.status).toBe(200);
+    it("it  post and response good",async()=>{
+    const response = await request(app).post('/api/shorturl/new/').type('form').send({url:"https://www.pirateproxy-bay.com/"});
+     startWith  = response.text.startsWith("http://localhost:3000/api/shorturl/new/");
+    expect(response.status).toBe(200);
     expect(startWith).toBe(true);
-    expect(response1.text).not.toBe(response2.text);
     }) 
     
 })

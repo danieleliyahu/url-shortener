@@ -103,7 +103,7 @@ class DataBase {
       try {
           const dataJson = JSON.parse(data)
           if(!JSON.stringify(dataJson[1][id])){
-              res.status(404).send("the id is not correct")
+              res.status(404).send("the id is not exist")
               return
           }
           let path = JSON.stringify(dataJson[1][id])
