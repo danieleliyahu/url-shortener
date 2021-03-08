@@ -1,5 +1,0 @@
-.vscode/*
-.env
-node_modules/
-__test__/supertest.test.js
-saveurl/index2.json
