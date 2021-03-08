@@ -2,9 +2,10 @@ body {
   font-family: Arial, sans-serif;
   font-size: 16px;
   color: #222;
-  background-color: #fff;
+  background-image: url(space.png);
   text-align: center;
   line-height: 1.4em;
+  position: relative;
 }
 
 main {
@@ -16,7 +17,13 @@ h3 {
   margin-top: 30px;
 }
 
-
+h1{
+  position: relative;
+  margin: auto;
+  top: 290px;
+  color: white;
+  font-weight: bold;
+}
 
 .user-stories li {
   margin-bottom: 1em;
@@ -43,4 +50,17 @@ input {
 input[type='text'] {
   width: 220px;
   text-align: center;
+}
+section{
+  position: relative;
+  margin: auto;
+  top: 290px;
+}
+legend{
+  color: white;
+  font-weight: bold;
+}
+label{
+  color: white;
+  font-weight: bold;
 }
